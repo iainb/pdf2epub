@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+
+from pdf2epub import main
+
+# utf output TODO fix this
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+if (len(sys.argv) > 1):
+    main.main(sys.argv[1])
+else:
+    print "Usage: run <path to xml file>"
