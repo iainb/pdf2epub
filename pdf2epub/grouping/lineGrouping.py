@@ -1,8 +1,6 @@
 from lxml import etree
 import pdf2epub.common as common
 
-from pdf2epub.printers import stdout
-
 class _mergeTrailingHyphens():
     def __init__(self):
         pass

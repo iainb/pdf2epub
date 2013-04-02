@@ -1,6 +1,5 @@
 from lxml import etree
 import pdf2epub.common as common
-from pdf2epub.printers import stdout
 
 # lineExtractors take a page which contains 'text' elements, which in turn contains
 # 'token' elements and converts them into 'line' elements which contain 'token' elements
@@ -23,7 +22,7 @@ class _simpleLineExtractor():
                     line_info = token_info
                     line = etree.Element('LINE')
                 
-                if (common.looseCompare(token_info['y'],line_info['y'],c['loose_compare'])):
+                if (common.looseCompare(token_info['y'],line_info['y'],c['y_height_diff'])):
                     # same line
                     line.append(token)
                 else:
@@ -93,6 +92,6 @@ class _simpleLineExtractor():
         line.set('chars',  unicode(chars))
         
     def requirements(self):
-        return {'loose_compare': 'pixel difference between two line "y" values to consider them the same'}
+        return {'y_height_diff': 'pixel difference between two line "y" values to consider them the same'}
 
 simpleLineExtractor = _simpleLineExtractor()

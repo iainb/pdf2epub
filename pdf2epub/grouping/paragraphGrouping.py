@@ -1,8 +1,6 @@
 from lxml import etree
 import pdf2epub.common as common
 
-from pdf2epub.printers import stdout
-
 # lineHeightgrouping groups lines into paragraphs based on the
 # height of the line. Lines with the same height are determined
 # to be part of the same paragraph
@@ -22,7 +20,7 @@ class _lineHeightGrouping():
             nxt     = lines[i + 1]
             c_info  = common.lineExtract(current)
             n_info  = common.lineExtract(nxt)
-            if (common.looseCompare(c_info['height'],n_info['height'],1)):
+            if (common.looseCompare(c_info['height'],n_info['height'],c['line_height_diff'])):
                 # same para
                 paragraph.append(nxt)
             else:
@@ -37,7 +35,7 @@ class _lineHeightGrouping():
         return output
     
     def requirements(self):
-        return { 'loose_compare' : 'allowed size difference between line heights' }
+        return { 'line_height_diff' : 'allowed size difference between line heights' }
 
 # some books have chapters where the first character (or perhaps more) of the
 # first sentence of the first paragraph have a large letter.
@@ -127,14 +125,6 @@ class _splitOnIndent():
             for para in paras:
                 output.append(para)
 
-        ''' 
-        for paragraph in output.iter('PARAGRAPH'):
-            print "<p " + paragraph.get('complete', 'unknown')  + ">"
-            for line in paragraph.iter('LINE'):
-                stdout.printLine(line)
-            print "</p>"
-        '''
-
         return output
 
     def split(self, paragraph, c):
@@ -146,7 +136,7 @@ class _splitOnIndent():
         info = None
         for i in xrange(0,len(lines)):
             info = common.lineExtract(lines[i])
-            if (common.looseCompare(info['left'],indent,1)):
+            if (common.looseCompare(info['left'],indent,c['para_indent_diff'])):
                 # same para
                 tmp.append(lines[i])
             elif (i == 0):
@@ -160,7 +150,7 @@ class _splitOnIndent():
                 tmp.append(lines[i])
 
         if (info != None):
-            if (common.looseCompare(info['right'],justify,c['loose_compare'])):
+            if (common.looseCompare(info['right'],justify,c['para_indent_diff'])):
                 if (len(tmp) == 1):
                     tmp.set('complete', 'yes')
                 else:
@@ -198,7 +188,7 @@ class _splitOnIndent():
         return indent
         
     def requirements(self):
-        return {}
+        return { 'para_indent_diff' : 'allowed difference between line indents before a new paragraph is formed' }
 
 # split up paragraphs if there is a space larger than the
 # height of one line between two lines.
@@ -212,14 +202,6 @@ class _splitOnVerticalGap():
             for para in paras:
                 output.append(para)
        
-        ''' 
-        for paragraph in output.iter('PARAGRAPH'):
-            print "<p>"
-            for line in paragraph.iter('LINE'):
-                stdout.printLine(line)
-            print "</p>"
-        '''
-
         return output
 
     def split(self, paragraph, c):
@@ -241,7 +223,7 @@ class _splitOnVerticalGap():
 
             diff = b_values['base'] - a_values['base']
 
-            if (common.looseCompare(common_diff,diff,1)):
+            if (common.looseCompare(common_diff,diff,c['vertical_diff'])):
                 # same
                 tmp.append(b)
             else:
@@ -250,25 +232,6 @@ class _splitOnVerticalGap():
                 tmp = etree.Element('PARAGRAPH')
                 tmp.append(b)
 
-            '''
-            c_next = c_values['base'] + c_values['height']
-            print "***"
-            stdout.printLine(n)
-            print n_values
-            
-            #stdout.printLine(n)
-            #print c_next
-            #print n_values['top']
-            if (c_next > n_values['top']):
-                # same
-                tmp.append(n)
-            else:
-                # split
-                output.append(tmp)
-                tmp = etree.Element('PARAGRAPH')
-                tmp.append(n)
-            '''
-        
         output.append(tmp)
         return output
 
@@ -287,7 +250,7 @@ class _splitOnVerticalGap():
 
         
     def requirements(self):
-        return {}
+        return {'vertical_diff' : 'allowed space between lines before a new para is created'}
 
 
 class _createSummary():
@@ -296,8 +259,6 @@ class _createSummary():
     def apply(self, page, c):
         for para in page.iter('PARAGRAPH'):
             self.paragraphSummary(para)
-            #print len(para)
-            #print para.get('base')
 
         return page
 
@@ -352,7 +313,6 @@ class _createSummary():
 
     def requiremnets():
         return {}
-
 
 # make class instances available
 lineHeightGrouping = _lineHeightGrouping()

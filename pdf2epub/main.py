@@ -13,11 +13,16 @@ from printers import stdout
 
 def main(f):
     c = {   'input_path': f,
-            'start_page': 69, 
-            'end_page'  : 69,
+            'start_page': 23, 
+            'end_page'  : 274,
             'header_size': 42,
             'footer_size': 60,
-            'loose_compare': 5 }
+            'y_height_diff': 5,
+            'line_height_diff': 0.1,
+            'para_indent_diff': 1,
+            'vertical_diff': 1
+    }
+
     processBook(c)
 
 def processBook(c):
@@ -56,7 +61,7 @@ def processPage(page, c):
 
     # merge large paragraph initial letters into main text
     page = paragraphGrouping.chapterStartLetter.apply(page, c)
-
+    
     # split up paragraphs based on the vertical gap between lines
     page = paragraphGrouping.splitOnVerticalGap.apply(page, c)
 
