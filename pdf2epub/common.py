@@ -25,6 +25,7 @@ def tokenExtract(token):
     o['top']         = o['base'] - o['height']
     o['left']        = o['x']
     o['right']       = o['left'] + o['width']
+    o['size']        = token.get('size','unknown')
 
     if (token.text != None):
         o['chars'] = len(token.text)

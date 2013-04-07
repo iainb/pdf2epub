@@ -3,6 +3,7 @@ from lxml import etree
 from filter import pageFilters
 from filter import tokenFilters
 from extractor import lineExtractors
+from extractor import fontExtractors
 from grouping import lineGrouping
 from grouping import paragraphGrouping
 from grouping import pageGrouping
