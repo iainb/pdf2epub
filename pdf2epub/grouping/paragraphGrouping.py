@@ -73,6 +73,8 @@ class _chapterStartLetter():
         # value as the lines affected by the large start letter
         first  = lines[0]
         tokens = first.getchildren()
+        if (num >= len(tokens)):
+            return False
         first_normal = tokens[num]        
         first_info   = common.tokenExtract(first_normal)
         first_x      = first_info['x']

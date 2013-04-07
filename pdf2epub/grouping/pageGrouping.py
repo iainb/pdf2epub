@@ -14,13 +14,14 @@ class _mergeMultiPageParagraphs():
                 a_last_info = common.paraExtract(a_last)
                 if (a_last_info['complete'] == False):
                     b_paragraphs = pages[i + 1].getchildren()
-                    b_first = b_paragraphs[0]
-                    b_first_info = common.paraExtract(b_first)
-                    if (a_last_info['height'] == b_first_info['height']):
-                        # merge, lines are the same height                    
-                        common.mergeParagraphsBtoA(a_last, b_first)
-                        # now remove b_first from page
-                        pages[i + 1].remove(b_first)
+                    if (len(b_paragraphs) > 0):
+                        b_first = b_paragraphs[0]
+                        b_first_info = common.paraExtract(b_first)
+                        if (a_last_info['height'] == b_first_info['height']):
+                            # merge, lines are the same height                    
+                            common.mergeParagraphsBtoA(a_last, b_first)
+                            # now remove b_first from page
+                            pages[i + 1].remove(b_first)
         return book
 
     def requirements(self):
